@@ -11,7 +11,8 @@ from app.task.application import (
     RegisterTaskUseCase,
     GetAllTasksUseCase,
     GetTaskUseCase,
-    DeleteTaskUseCase
+    DeleteTaskUseCase,
+    UpdateTaskUseCase
 )
 from app.task.infrastructure.presentation.dtos import (
     RegisterTaskResponse,
@@ -19,7 +20,9 @@ from app.task.infrastructure.presentation.dtos import (
     GetAllTasksResponse,
     TaskResponse,
     GetTaskResponse,
-    DeleteTaskResponse
+    DeleteTaskResponse,
+    UpdateTaskRequest,
+    UpdateTaskResponse
 )
 
 logger = logging.getLogger(__name__)
@@ -33,12 +36,14 @@ class TaskController:
         register_task_use_case: RegisterTaskUseCase,
         get_all_tasks_use_case: GetAllTasksUseCase,
         get_task_use_case: GetTaskUseCase,
-        delete_task_use_case: DeleteTaskUseCase
+        delete_task_use_case: DeleteTaskUseCase,
+        update_task_use_case: UpdateTaskUseCase
     ):
         self.register_task_use_case = register_task_use_case
         self.get_all_tasks_use_case = get_all_tasks_use_case
         self.get_task_use_case = get_task_use_case
         self.delete_task_use_case = delete_task_use_case
+        self.update_task_use_case = update_task_use_case
 
     @handle_api_exceptions
     async def register(
@@ -104,6 +109,41 @@ class TaskController:
         )
 
     @handle_api_exceptions
+    async def update_task(
+        self,
+        task_id: str,
+        request: UpdateTaskRequest,
+    ) -> UpdateTaskResponse:
+        """
+        Update task by ID.
+        """
+        logger.info(f"Task update by id: {task_id}")
+
+        # Prepare data dict from request
+        data = {}
+        if request.title is not None:
+            data["title"] = request.title
+        if request.description is not None:
+            data["description"] = request.description
+        if request.state is not None:
+            data["state"] = request.state
+
+        # Execute use case
+        task_updated = await self.update_task_use_case.execute(task_id, data)
+
+        if not task_updated:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Task with id {task_id} not found"
+            )
+
+        # Convert to response
+        return UpdateTaskResponse(
+            message="Task updated successfully.",
+            task=self._task_to_response(task_updated),
+        )
+
+    @handle_api_exceptions
     async def delete_task(
         self,
         task_id: str
@@ -111,7 +151,7 @@ class TaskController:
         """
         Delete task by ID.
         """
-        logger.info(f"Task Deleting by id: {task_id}")
+        logger.info(f"Task deleting by id: {task_id}")
 
         # Execute use case
         task_deleted = await self.delete_task_use_case.execute(task_id)
@@ -125,7 +165,7 @@ class TaskController:
         # Convert to response
         return DeleteTaskResponse(
             message="Task deleted successfully.",
-            task_id=self.task_id.value,
+            task_id=task_id,
         )
 
     @staticmethod

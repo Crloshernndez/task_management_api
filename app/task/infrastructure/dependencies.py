@@ -8,6 +8,7 @@ from app.task.application import (
     GetAllTasksUseCase,
     GetTaskUseCase,
     DeleteTaskUseCase,
+    UpdateTaskUseCase,
 )
 from app.task.infrastructure.repositories import (
     TaskRepository
@@ -65,6 +66,14 @@ async def get_delete_task_use_case(
     return DeleteTaskUseCase(task_repository)
 
 
+async def get_update_task_use_case(
+    task_repository: Annotated[
+        TaskRepository, Depends(get_task_repository)
+    ]
+) -> UpdateTaskUseCase:
+    return UpdateTaskUseCase(task_repository)
+
+
 # ============================================================================
 # Controller Dependencies
 # ============================================================================
@@ -82,6 +91,9 @@ async def get_task_controller(
     ],
     delete_task_use_case: Annotated[
         DeleteTaskUseCase, Depends(get_delete_task_use_case)
+    ],
+    update_task_use_case: Annotated[
+        UpdateTaskUseCase, Depends(get_update_task_use_case)
     ]
 ) -> TaskController:
     """
@@ -91,5 +103,6 @@ async def get_task_controller(
         register_task_use_case=register_task_use_case,
         get_all_tasks_use_case=get_all_tasks_use_case,
         get_task_use_case=get_task_use_case,
-        delete_task_use_case=delete_task_use_case
+        delete_task_use_case=delete_task_use_case,
+        update_task_use_case=update_task_use_case
     )

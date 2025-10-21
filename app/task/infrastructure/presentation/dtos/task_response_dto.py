@@ -85,7 +85,7 @@ class GetTaskResponse(BaseModel):
 
 
 class DeleteTaskResponse(BaseModel):
-    """Get single task response."""
+    """Delete task response."""
 
     message: str = Field(..., description="Success message")
     task_id: str = Field(..., description="Task Id deleted")
@@ -95,5 +95,25 @@ class DeleteTaskResponse(BaseModel):
             "example": {
                 "message": "Task deleted successfully.",
                 "task_id": "123e4567-e89b-12d3-a456-426614174000",
+            }
+        }
+
+
+class UpdateTaskResponse(BaseModel):
+    """Update task response."""
+
+    message: str = Field(..., description="Success message")
+    task: TaskResponse = Field(..., description="Updated task information")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "Task updated successfully.",
+                "task": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "title": "updated title",
+                    "description": "This is an updated description",
+                    "state": "completed"
+                },
             }
         }

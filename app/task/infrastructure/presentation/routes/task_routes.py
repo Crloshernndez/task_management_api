@@ -7,7 +7,9 @@ from app.task.infrastructure.presentation.dtos import (
     RegisterTaskRequest,
     GetAllTasksResponse,
     GetTaskResponse,
-    DeleteTaskResponse
+    DeleteTaskResponse,
+    UpdateTaskResponse,
+    UpdateTaskRequest
 )
 from app.task.infrastructure.presentation.controllers import (
     TaskController
@@ -76,6 +78,28 @@ async def get_task(
     Get task by id.
     """
     return await controller.get_task(task_id)
+
+
+@router.put(
+    "/{task_id}",
+    response_model=UpdateTaskResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Update task by id",
+    description="Update task by id",
+    responses={
+        200: {"description": "Task Update successfully"},
+        404: {"description": "Task not found"},
+    },
+)
+async def update_task(
+    task_id: str,
+    request: UpdateTaskRequest,
+    controller: Annotated[TaskController, Depends(get_task_controller)],
+) -> UpdateTaskResponse:
+    """
+    Update task by id.
+    """
+    return await controller.update_task(task_id, request)
 
 
 @router.delete(
