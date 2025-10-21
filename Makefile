@@ -77,11 +77,8 @@ dev: install-dev run ## Quick development start
 # LOCAL SERVER (WITHOUT DOCKER)
 # ------------------------------------------------------------------------------
 
-run: ## Run the development server
+run-local: ## Run the development server
 	${PYTHON_ENTRYPOINT} --reload --host 0.0.0.0 --port 8000
-
-run-prod: ## Run the production server
-	${PYTHON_ENTRYPOINT} --host 0.0.0.0 --port 8000 --workers 4
 
 # ------------------------------------------------------------------------------
 # DOCKER COMMANDS (DOCKER-COMPOSE)
