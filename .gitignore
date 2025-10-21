@@ -1,0 +1,76 @@
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+
+# Pytest
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.nox/
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Editors
+.vscode/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+/data/*.db
+
+# Docker
+.dockerignore
+Dockerfile.bak
+docker-compose.yml.bak
+
+# Uvicorn/FastAPI specific
+.uvicorn/
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
