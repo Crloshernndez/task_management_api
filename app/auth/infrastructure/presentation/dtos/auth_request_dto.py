@@ -24,3 +24,18 @@ class RegisterRequest(BaseModel):
                 "username": "John",
             }
         }
+
+
+class LoginRequest(BaseModel):
+    """Request for user login."""
+
+    email: EmailStr = Field(..., description="User email address")
+    password: str = Field(..., description="User password")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email": "user@example.com",
+                "password": "SecurePass123!",
+            }
+        }

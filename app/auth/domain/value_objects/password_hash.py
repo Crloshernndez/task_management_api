@@ -1,8 +1,11 @@
 from dataclasses import dataclass
+from passlib.context import CryptContext
 from app.core.exceptions import (
     DomainValidationException,
     RequiredFieldException
 )
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @dataclass(frozen=True)
@@ -33,6 +36,9 @@ class PasswordHash:
                     bcrypt esperado.",
                 code="INVALID_FORMAT"
             )
+
+    def verify(self, plain_password: str) -> bool:
+        return pwd_context.verify(plain_password, self.value)
 
     def __str__(self) -> str:
         return self.value

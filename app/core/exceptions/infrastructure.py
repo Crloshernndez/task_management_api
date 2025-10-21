@@ -1,7 +1,7 @@
 from .base import BaseApplicationException
 
 
-class InfrastructureException(BaseApplicationException, Exception):
+class InfrastructureException(BaseApplicationException):
     """
     Base exception for all infrastructure-related errors.
     """
@@ -11,14 +11,8 @@ class InfrastructureException(BaseApplicationException, Exception):
             detail: Exception = None,
             code: str = "INFRASTRUCTURE_ERROR"
             ):
-        self.message = message
         self.detail = detail
-        self.code = code
-        super().__init__(
-            self.message,
-            self.detail,
-            self.code
-        )
+        super().__init__(message, code)
 
 
 class DatabaseConnectionError(InfrastructureException):
@@ -41,8 +35,9 @@ class DatabaseOperationError(InfrastructureException):
     def __init__(
             self,
             message: str = "Error en operación de base de datos.",
-            detail: Exception = None):
-        super().__init__(message, detail)
+            detail: Exception = None,
+            code: str = "DATABASE_OPERATION_ERROR"):
+        super().__init__(message, detail, code)
 
 
 class RateLimitException(InfrastructureException):

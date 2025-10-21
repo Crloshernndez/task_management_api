@@ -46,7 +46,7 @@ def exception_repository_handlers(
 
             except Exception as e:
                 raise DatabaseOperationError(
-                    message=f"Error inesperado al crear {operation_name}",
+                    message=f"Error inesperado en {operation_name}",
                     detail=str(e),
                     code="UNEXPECTED_DATABASE_ERROR",
                 )

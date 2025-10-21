@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, Request, status
 from app.auth.infrastructure.presentation.dtos import (
     RegisterResponse,
     RegisterRequest,
-    UserResponse
+    LoginResponse,
+    LoginRequest
 )
 from app.auth.infrastructure.presentation.controllers import (
     AuthController
@@ -35,3 +36,25 @@ async def register(
     Register a new user account.
     """
     return await controller.register(request)
+
+
+@router.post(
+    "/login",
+    response_model=LoginResponse,
+    status_code=status.HTTP_200_OK,
+    summary="User login",
+    description="Authenticate user and generate access/refresh tokens",
+    responses={
+        200: {"description": "Login successful"},
+        401: {"description": "Invalid credentials or account locked"},
+    },
+)
+async def login(
+    request: LoginRequest,
+    http_request: Request,
+    controller: Annotated[AuthController, Depends(get_auth_controller)],
+) -> LoginResponse:
+    """
+    Authenticate user with email and password.
+    """
+    return await controller.login(request, http_request)

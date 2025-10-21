@@ -1,12 +1,10 @@
-class BaseApplicationException:
+class BaseApplicationException(Exception):
     def __init__(
             self,
             message: str,
-            detail: str,
             code: str
             ):
         self.message = message
-        self.detail = detail
         self.code = code
         super().__init__(self.message)
 
@@ -14,11 +12,14 @@ class BaseApplicationException:
         """
         Converts the exception to a dictionary for a structured API response.
         """
-        return {
+        error_dict = {
             "status": "error",
             "error": {
                 "code": self.code,
-                "message": self.message,
-                "details": self.detail
+                "message": self.message
             }
         }
+        # Add details if available
+        if hasattr(self, 'detail') and self.detail:
+            error_dict["error"]["details"] = self.detail
+        return error_dict

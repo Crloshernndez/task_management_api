@@ -41,23 +41,22 @@ class UserRepository(UserRepositoryPort):
         stmt = (
             select(UserModel)
             .where(UserModel.id == user_id.value)
-            .options(selectinload(UserModel.roles))
         )
         result = await self.session.execute(stmt)
-        user_model = result.unique().scalar_one_or_none()
+        user_model = result.scalar_one_or_none()
 
         if user_model:
             return self._to_entity(user_model)
         return None
 
-    @exception_repository_handlers("find by email user")
+    @exception_repository_handlers("get by email user")
     async def get_user_by_email(self, email: Email) -> Optional[User]:
         stmt = (
             select(UserModel)
             .where(UserModel.email == email.value)
         )
         result = await self.session.execute(stmt)
-        user_model = result.unique().scalar_one_or_none()
+        user_model = result.scalar_one_or_none()
         if user_model:
             return self._to_entity(user_model)
         return None
@@ -71,10 +70,10 @@ class UserRepository(UserRepositoryPort):
     def _to_entity(self, model: UserModel) -> User:
         """Convert ORM model to domain entity."""
         return User(
-            id=EntityId(model.id),
             email=Email(value=model.email),
             username=Username(model.username),
             password_hash=PasswordHash(model.hashed_password),
+            id=EntityId(model.id),
             created_at=model.created_at,
             updated_at=model.updated_at,
         )

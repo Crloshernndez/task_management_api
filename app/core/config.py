@@ -43,14 +43,13 @@ class Settings(BaseSettings):
     # =================================================================
     # SECURITY SETTINGS
     # =================================================================
-    # SECRET_KEY: str = Field(..., min_length=32)
+    SECRET_KEY: str = Field(..., min_length=32)
 
-    # # JWT Configuration
-    # JWT_SECRET_KEY: str = Field(..., min_length=32)
-    # JWT_REFRESH_SECRET_KEY: str = Field(..., min_length=32)
-    # JWT_ALGORITHM: str = Field(default="HS256")
-    # ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=15)
-    # REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7)
+    # JWT Configuration
+    JWT_SECRET_KEY: str = Field(..., min_length=32)
+    JWT_ALGORITHM: str = Field(default="HS256")
+    TOKEN_TYPE: str = Field(default="Bearer")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=15)
 
     # =================================================================
     # CORS SETTINGS

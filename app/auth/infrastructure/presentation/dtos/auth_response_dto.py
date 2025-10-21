@@ -1,5 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
-from datetime import datetime
+from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
 
@@ -36,6 +35,44 @@ class RegisterResponse(BaseModel):
                     "id": "123e4567-e89b-12d3-a456-426614174000",
                     "email": "user@example.com",
                     "username": "John",
+                },
+            }
+        }
+
+
+class TokenResponse(BaseModel):
+    """Token pair response."""
+
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = Field(default="Bearer", description="Token type")
+    expires_in: int = Field(
+        ..., description="Access token expiration in seconds"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "token_type": "Bearer",
+                "expires_in": 1800,
+            }
+        }
+
+
+class LoginResponse(BaseModel):
+    """Login success response."""
+
+    message: str = Field(..., description="Success message")
+    token: TokenResponse = Field(..., description="Authentication tokens")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "Login successful",
+                "token": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "token_type": "Bearer",
+                    "expires_in": 1800,
                 },
             }
         }
