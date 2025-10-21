@@ -32,11 +32,33 @@ class RegisterTaskResponse(BaseModel):
         json_schema_extra = {
             "example": {
                 "message": "Task registered successfully.",
-                "user": {
+                "task": {
                     "id": "123e4567-e89b-12d3-a456-426614174000",
                     "title": "example title",
                     "description": "This is an example description",
                     "state": "pending"
                 },
+            }
+        }
+
+
+class GetAllTasksResponse(BaseModel):
+    """Get all tasks response."""
+
+    message: str = Field(..., description="Success message")
+    tasks: list[TaskResponse] = Field(..., description="List of tasks")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "Tasks retrieved successfully.",
+                "tasks": [
+                    {
+                        "id": "123e4567-e89b-12d3-a456-426614174000",
+                        "title": "example title",
+                        "description": "This is an example description",
+                        "state": "pending"
+                    }
+                ],
             }
         }

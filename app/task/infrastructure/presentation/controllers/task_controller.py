@@ -8,11 +8,13 @@ import logging
 
 from app.core.decorators.exception_routes_handlers import handle_api_exceptions
 from app.task.application import (
-    RegisterTaskUseCase
+    RegisterTaskUseCase,
+    GetAllTasksUseCase
 )
 from app.task.infrastructure.presentation.dtos import (
     RegisterTaskResponse,
     RegisterTaskRequest,
+    GetAllTasksResponse,
     TaskResponse
 )
 
@@ -25,8 +27,10 @@ class TaskController:
     def __init__(
         self,
         register_task_use_case: RegisterTaskUseCase,
+        get_all_tasks_use_case: GetAllTasksUseCase
     ):
         self.register_task_use_case = register_task_use_case
+        self.get_all_tasks_use_case = get_all_tasks_use_case
 
     @handle_api_exceptions
     async def register(
@@ -47,6 +51,23 @@ class TaskController:
         return RegisterTaskResponse(
             message="Task registered successfully",
             task=self._task_to_response(task),
+        )
+
+    @handle_api_exceptions
+    async def get_all(
+        self
+    ) -> GetAllTasksResponse:
+        """
+        Get all task.
+        """
+        logger.info("Tasks retrieved request")
+        # Execute use case
+        tasks = await self.get_all_tasks_use_case.execute()
+
+        # Convert to response
+        return GetAllTasksResponse(
+            message="Tasks retrieved successfully",
+            tasks=[self._task_to_response(task) for task in tasks],
         )
 
     @staticmethod

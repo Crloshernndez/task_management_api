@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, status
 from app.task.infrastructure.presentation.dtos import (
     RegisterTaskResponse,
     RegisterTaskRequest,
+    GetAllTasksResponse,
 )
 from app.task.infrastructure.presentation.controllers import (
     TaskController
@@ -33,3 +34,22 @@ async def register(
     Register a new task.
     """
     return await controller.register(request)
+
+
+@router.get(
+    "/",
+    response_model=GetAllTasksResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get all tasks",
+    description="Retrieve all tasks",
+    responses={
+        200: {"description": "Tasks retrieved successfully"},
+    },
+)
+async def get_all(
+    controller: Annotated[TaskController, Depends(get_task_controller)],
+) -> GetAllTasksResponse:
+    """
+    Get all tasks.
+    """
+    return await controller.get_all()
