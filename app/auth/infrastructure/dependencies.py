@@ -1,5 +1,6 @@
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_async_session
@@ -11,6 +12,10 @@ from app.auth.infrastructure.presentation.controllers import (
     AuthController
 )
 from app.auth.infrastructure.adapters import JWTTokenService
+from app.auth.domain.exeptions import InvalidTokenException, TokenExpiredException
+from app.common.value_objects import EntityId
+
+security = HTTPBearer()
 
 # ============================================================================
 # Service Dependencies
@@ -75,3 +80,58 @@ async def get_auth_controller(
         register_use_case=register_use_case,
         login_use_case=login_use_case
     )
+
+
+# ============================================================================
+# Authentication Dependencies
+# ============================================================================
+
+
+async def get_current_user_id(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    token_service: Annotated[JWTTokenService, Depends(get_token_service)]
+) -> EntityId:
+    try:
+        user_id = await token_service.verify_access_token(credentials.credentials)
+        return user_id
+
+    except TokenExpiredException:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "status": "error",
+                "error": {
+                    "code": "TOKEN_EXPIRED",
+                    "message": "Token expirado.",
+                    "details": "El token de autenticación ha expirado."
+                }
+            },
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    except InvalidTokenException:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "status": "error",
+                "error": {
+                    "code": "INVALID_TOKEN",
+                    "message": "Token inválido.",
+                    "details": "El token de autenticación es inválido."
+                }
+            },
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "status": "error",
+                "error": {
+                    "code": "INTERNAL_SERVER_ERROR",
+                    "message": "Error interno del servidor.",
+                    "details": str(e)
+                }
+            }
+        )

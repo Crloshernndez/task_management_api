@@ -1,6 +1,5 @@
 """
 Application configuration settings.
-Uses Pydantic Settings for type validation and environment variable management.
 """
 
 from functools import lru_cache
@@ -19,7 +18,7 @@ class Settings(BaseSettings):
     # =================================================================
     # APPLICATION SETTINGS
     # =================================================================
-    PROJECT_NAME: str = Field(default="Espora ecommerce API")
+    PROJECT_NAME: str = Field(default="Task Management API")
     VERSION: str = Field(default="1.0.0")
     ENVIRONMENT: str = Field(
         default="development"

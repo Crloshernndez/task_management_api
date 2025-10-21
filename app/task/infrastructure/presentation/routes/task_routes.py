@@ -15,6 +15,8 @@ from app.task.infrastructure.presentation.controllers import (
     TaskController
 )
 from app.task.infrastructure.dependencies import get_task_controller
+from app.auth.infrastructure.dependencies import get_current_user_id
+from app.common.value_objects import EntityId
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -28,11 +30,13 @@ router = APIRouter(prefix="/tasks", tags=["Tasks"])
     responses={
         201: {"description": "Task registered successfully"},
         400: {"description": "Invalid input data"},
+        401: {"description": "Unauthorized"},
     },
 )
 async def register(
     request: RegisterTaskRequest,
     controller: Annotated[TaskController, Depends(get_task_controller)],
+    current_user_id: Annotated[EntityId, Depends(get_current_user_id)],
 ) -> RegisterTaskResponse:
     """
     Register a new task.
@@ -48,10 +52,12 @@ async def register(
     description="Retrieve all tasks",
     responses={
         200: {"description": "Tasks retrieved successfully"},
+        401: {"description": "Unauthorized"},
     },
 )
 async def get_all(
     controller: Annotated[TaskController, Depends(get_task_controller)],
+    current_user_id: Annotated[EntityId, Depends(get_current_user_id)],
 ) -> GetAllTasksResponse:
     """
     Get all tasks.
@@ -67,12 +73,14 @@ async def get_all(
     description="Retrieve task by id",
     responses={
         200: {"description": "Task retrieved successfully"},
+        401: {"description": "Unauthorized"},
         404: {"description": "Task not found"},
     },
 )
 async def get_task(
     task_id: str,
     controller: Annotated[TaskController, Depends(get_task_controller)],
+    current_user_id: Annotated[EntityId, Depends(get_current_user_id)],
 ) -> GetTaskResponse:
     """
     Get task by id.
@@ -88,6 +96,7 @@ async def get_task(
     description="Update task by id",
     responses={
         200: {"description": "Task Update successfully"},
+        401: {"description": "Unauthorized"},
         404: {"description": "Task not found"},
     },
 )
@@ -95,6 +104,7 @@ async def update_task(
     task_id: str,
     request: UpdateTaskRequest,
     controller: Annotated[TaskController, Depends(get_task_controller)],
+    current_user_id: Annotated[EntityId, Depends(get_current_user_id)],
 ) -> UpdateTaskResponse:
     """
     Update task by id.
@@ -110,12 +120,14 @@ async def update_task(
     description="Delete task by id",
     responses={
         200: {"description": "Task deleted successfully"},
+        401: {"description": "Unauthorized"},
         404: {"description": "Task not found"},
     },
 )
 async def delete_task(
     task_id: str,
     controller: Annotated[TaskController, Depends(get_task_controller)],
+    current_user_id: Annotated[EntityId, Depends(get_current_user_id)],
 ) -> DeleteTaskResponse:
     """
     Delete task by id.
