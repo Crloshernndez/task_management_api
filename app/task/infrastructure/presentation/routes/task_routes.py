@@ -6,7 +6,8 @@ from app.task.infrastructure.presentation.dtos import (
     RegisterTaskResponse,
     RegisterTaskRequest,
     GetAllTasksResponse,
-    GetTaskResponse
+    GetTaskResponse,
+    DeleteTaskResponse
 )
 from app.task.infrastructure.presentation.controllers import (
     TaskController
@@ -75,3 +76,24 @@ async def get_task(
     Get task by id.
     """
     return await controller.get_task(task_id)
+
+
+@router.delete(
+    "/{task_id}",
+    response_model=DeleteTaskResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Delete task by id",
+    description="Delete task by id",
+    responses={
+        200: {"description": "Task deleted successfully"},
+        404: {"description": "Task not found"},
+    },
+)
+async def delete_task(
+    task_id: str,
+    controller: Annotated[TaskController, Depends(get_task_controller)],
+) -> DeleteTaskResponse:
+    """
+    Delete task by id.
+    """
+    return await controller.delete_task(task_id)

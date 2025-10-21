@@ -10,14 +10,16 @@ from app.core.decorators.exception_routes_handlers import handle_api_exceptions
 from app.task.application import (
     RegisterTaskUseCase,
     GetAllTasksUseCase,
-    GetTaskUseCase
+    GetTaskUseCase,
+    DeleteTaskUseCase
 )
 from app.task.infrastructure.presentation.dtos import (
     RegisterTaskResponse,
     RegisterTaskRequest,
     GetAllTasksResponse,
     TaskResponse,
-    GetTaskResponse
+    GetTaskResponse,
+    DeleteTaskResponse
 )
 
 logger = logging.getLogger(__name__)
@@ -30,11 +32,13 @@ class TaskController:
         self,
         register_task_use_case: RegisterTaskUseCase,
         get_all_tasks_use_case: GetAllTasksUseCase,
-        get_task_use_case: GetTaskUseCase
+        get_task_use_case: GetTaskUseCase,
+        delete_task_use_case: DeleteTaskUseCase
     ):
         self.register_task_use_case = register_task_use_case
         self.get_all_tasks_use_case = get_all_tasks_use_case
         self.get_task_use_case = get_task_use_case
+        self.delete_task_use_case = delete_task_use_case
 
     @handle_api_exceptions
     async def register(
@@ -74,15 +78,6 @@ class TaskController:
             tasks=[self._task_to_response(task) for task in tasks],
         )
 
-    @staticmethod
-    def _task_to_response(task) -> TaskResponse:
-        return TaskResponse(
-            id=task.id.value,
-            title=task.title.value,
-            description=task.description.value,
-            state=task.state.value,
-        )
-
     @handle_api_exceptions
     async def get_task(
         self,
@@ -106,4 +101,38 @@ class TaskController:
         return GetTaskResponse(
             message="Task retrieved successfully",
             task=self._task_to_response(task),
+        )
+
+    @handle_api_exceptions
+    async def delete_task(
+        self,
+        task_id: str
+    ) -> DeleteTaskResponse:
+        """
+        Delete task by ID.
+        """
+        logger.info(f"Task Deleting by id: {task_id}")
+
+        # Execute use case
+        task_deleted = await self.delete_task_use_case.execute(task_id)
+
+        if not task_deleted:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Task with id {task_id} not found"
+            )
+
+        # Convert to response
+        return DeleteTaskResponse(
+            message="Task deleted successfully.",
+            task_id=self.task_id.value,
+        )
+
+    @staticmethod
+    def _task_to_response(task) -> TaskResponse:
+        return TaskResponse(
+            id=task.id.value,
+            title=task.title.value,
+            description=task.description.value,
+            state=task.state.value,
         )

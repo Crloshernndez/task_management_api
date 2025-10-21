@@ -6,7 +6,8 @@ from app.core.database import get_async_session
 from app.task.application import (
     RegisterTaskUseCase,
     GetAllTasksUseCase,
-    GetTaskUseCase
+    GetTaskUseCase,
+    DeleteTaskUseCase,
 )
 from app.task.infrastructure.repositories import (
     TaskRepository
@@ -56,6 +57,14 @@ async def get_get_task_use_case(
     return GetTaskUseCase(task_repository)
 
 
+async def get_delete_task_use_case(
+    task_repository: Annotated[
+        TaskRepository, Depends(get_task_repository)
+    ]
+) -> DeleteTaskUseCase:
+    return DeleteTaskUseCase(task_repository)
+
+
 # ============================================================================
 # Controller Dependencies
 # ============================================================================
@@ -71,6 +80,9 @@ async def get_task_controller(
     get_task_use_case: Annotated[
         GetTaskUseCase, Depends(get_get_task_use_case)
     ],
+    delete_task_use_case: Annotated[
+        DeleteTaskUseCase, Depends(get_delete_task_use_case)
+    ]
 ) -> TaskController:
     """
     Create auth controller with all dependencies.
@@ -78,5 +90,6 @@ async def get_task_controller(
     return TaskController(
         register_task_use_case=register_task_use_case,
         get_all_tasks_use_case=get_all_tasks_use_case,
-        get_task_use_case=get_task_use_case
+        get_task_use_case=get_task_use_case,
+        delete_task_use_case=delete_task_use_case
     )
