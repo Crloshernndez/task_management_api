@@ -19,9 +19,8 @@ class RequiredFieldException(DomainValidationException):
     """
     Exception raised when a required field is missing or empty in the domain.
     """
-    def __init__(self, message: str = None):
-        super().__init__(message)
-        self.code = "REQUIRED_FIELD"
+    def __init__(self, message: str = None, detail: str = None):
+        super().__init__(message, code="REQUIRED_FIELD", detail=detail)
 
 
 class InvalidUUIDException(DomainValidationException):

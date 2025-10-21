@@ -27,6 +27,7 @@ def setup_routes(app: FastAPI) -> None:
 
     # Register module routers
     _register_auth_routes(app)
+    _register_task_routes(app)
 
     logger.info("Routes registered successfully")
 
@@ -77,4 +78,19 @@ def _register_auth_routes(app: FastAPI) -> None:
         auth_router,
         prefix=settings.API_V1_PREFIX,
         tags=["Authentication"],
+    )
+
+
+def _register_task_routes(app: FastAPI) -> None:
+    """Register tasks routes."""
+
+    # Authentication routes
+    from app.task.infrastructure.presentation.routes.task_routes import (
+        router as task_router,
+    )
+
+    app.include_router(
+        task_router,
+        prefix=settings.API_V1_PREFIX,
+        tags=["Task"],
     )
