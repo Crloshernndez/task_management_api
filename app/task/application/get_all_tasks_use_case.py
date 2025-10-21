@@ -22,12 +22,6 @@ class GetAllTasksUseCase:
         self.task_repository = task_repository
 
     async def execute(self) -> List[Task]:
-        """
-        Get all tasks.
-
-        Returns:
-            List[Task]: List of all task entities
-        """
         logger.info("Retrieving all tasks")
 
         tasks = await self.task_repository.get_all_tasks()

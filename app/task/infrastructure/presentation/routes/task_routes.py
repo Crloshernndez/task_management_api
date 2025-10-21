@@ -6,6 +6,7 @@ from app.task.infrastructure.presentation.dtos import (
     RegisterTaskResponse,
     RegisterTaskRequest,
     GetAllTasksResponse,
+    GetTaskResponse
 )
 from app.task.infrastructure.presentation.controllers import (
     TaskController
@@ -53,3 +54,24 @@ async def get_all(
     Get all tasks.
     """
     return await controller.get_all()
+
+
+@router.get(
+    "/{task_id}",
+    response_model=GetTaskResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get task by id",
+    description="Retrieve task by id",
+    responses={
+        200: {"description": "Task retrieved successfully"},
+        404: {"description": "Task not found"},
+    },
+)
+async def get_task(
+    task_id: str,
+    controller: Annotated[TaskController, Depends(get_task_controller)],
+) -> GetTaskResponse:
+    """
+    Get task by id.
+    """
+    return await controller.get_task(task_id)

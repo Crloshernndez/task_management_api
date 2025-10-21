@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_async_session
 from app.task.application import (
     RegisterTaskUseCase,
-    GetAllTasksUseCase
+    GetAllTasksUseCase,
+    GetTaskUseCase
 )
 from app.task.infrastructure.repositories import (
     TaskRepository
@@ -47,6 +48,14 @@ async def get_get_all_tasks_use_case(
     return GetAllTasksUseCase(task_repository)
 
 
+async def get_get_task_use_case(
+    task_repository: Annotated[
+        TaskRepository, Depends(get_task_repository)
+    ]
+) -> GetTaskUseCase:
+    return GetTaskUseCase(task_repository)
+
+
 # ============================================================================
 # Controller Dependencies
 # ============================================================================
@@ -58,12 +67,16 @@ async def get_task_controller(
     ],
     get_all_tasks_use_case: Annotated[
         GetAllTasksUseCase, Depends(get_get_all_tasks_use_case)
-    ]
+    ],
+    get_task_use_case: Annotated[
+        GetTaskUseCase, Depends(get_get_task_use_case)
+    ],
 ) -> TaskController:
     """
     Create auth controller with all dependencies.
     """
     return TaskController(
         register_task_use_case=register_task_use_case,
-        get_all_tasks_use_case=get_all_tasks_use_case
+        get_all_tasks_use_case=get_all_tasks_use_case,
+        get_task_use_case=get_task_use_case
     )

@@ -62,3 +62,23 @@ class GetAllTasksResponse(BaseModel):
                 ],
             }
         }
+
+
+class GetTaskResponse(BaseModel):
+    """Get single task response."""
+
+    message: str = Field(..., description="Success message")
+    task: TaskResponse = Field(..., description="Task information")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "Task retrieved successfully.",
+                "task": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "title": "example title",
+                    "description": "This is an example description",
+                    "state": "pending"
+                },
+            }
+        }
